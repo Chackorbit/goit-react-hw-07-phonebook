@@ -1,6 +1,6 @@
 import { createSlice, combineReducers } from '@reduxjs/toolkit';
-import { persistReducer } from 'redux-persist';
-import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web
+import { getContacts } from './fetchContacts';
+import { testGetContacts } from './fetchContacts';
 
 export const defaulContacts = [
   { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
@@ -29,26 +29,20 @@ export const filterSlice = createSlice({
   name: 'contacts',
   initialState: '',
   reducers: {
-    filter(state, action) {
+    filter(_, action) {
       return action.payload;
     },
   },
 });
 
-const persistConfig = {
-  key: 'contacts',
-  storage,
-};
-
-export const persistedContactsReducer = persistReducer(
-  persistConfig,
-  contactSlice.reducer
-);
-
 export const rootReducer = combineReducers({
-  items: persistedContactsReducer,
+  contacts: contactSlice.reducer,
   filter: filterSlice.reducer,
+
+  [testGetContacts.reducerPath]: testGetContacts.reducer,
 });
 
-export const { addContact, remove } = contactSlice.actions;
+export const { addContact, remove, getContactsFulfilled } =
+  contactSlice.actions;
+// export const { getContactsFulfilled } = getContactsSlice.actions;
 export const { filter } = filterSlice.actions;

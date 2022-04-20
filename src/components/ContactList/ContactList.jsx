@@ -1,22 +1,29 @@
 import s from './ContactList.module.css';
-import React from 'react';
 import ContactItem from '../ContactItem/ContactItem';
 import { nanoid } from 'nanoid';
-import { useSelector, useDispatch } from 'react-redux';
-import { remove } from 'redux/contactsSlice';
+import {
+  useGetAllContactsQuery,
+  useDeleteContactMutation,
+} from 'redux/fetchContacts';
+import { useSelector } from 'react-redux';
 
 const ContactList = () => {
-  const dispatch = useDispatch();
+  const { isFetching } = useGetAllContactsQuery();
 
-  const getContacts = state => state.items.items;
+  const [deleteContact, { isLoading: isUpdating }] = useDeleteContactMutation();
+
   const getFilter = state => state.filter;
-
+  const getContacts = state => {
+    const data = state.contacts.queries['getAllContacts(undefined)'];
+    return data?.data;
+  };
   const getAllContacts = state => {
     const contacts = getContacts(state);
     const searchName = getFilter(state);
 
     const normalizeFilter = searchName.toLocaleLowerCase();
-    return contacts.filter(contact =>
+
+    return contacts?.filter(contact =>
       contact.name.toLowerCase().includes(normalizeFilter)
     );
   };
@@ -26,7 +33,7 @@ const ContactList = () => {
   return (
     <div className={s.container}>
       <ul className={s.ul}>
-        {allContacts.length < 1 ? (
+        {isFetching ?? allContacts.length < 1 ? (
           <p>We dont have contacts</p>
         ) : (
           allContacts.map(el => (
@@ -35,7 +42,8 @@ const ContactList = () => {
               name={el.name}
               number={el.number}
               id={el.id}
-              deleteContact={() => dispatch(remove(el.id))}
+              btnLoading={isUpdating}
+              deleteContact={() => deleteContact(el.id)}
             />
           ))
         )}
