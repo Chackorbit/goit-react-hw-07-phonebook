@@ -1,5 +1,5 @@
 import { createSlice, combineReducers } from '@reduxjs/toolkit';
-import { getContacts } from './fetchContacts';
+
 import { testGetContacts } from './fetchContacts';
 
 export const defaulContacts = [
