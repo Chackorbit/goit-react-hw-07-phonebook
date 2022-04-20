@@ -2,6 +2,7 @@ import { createSlice, combineReducers } from '@reduxjs/toolkit';
 
 import { testGetContacts } from './fetchContacts';
 
+// Дефолтные значения для списка контактов
 export const defaulContacts = [
   { id: 'id-1', name: 'Rosie Simpson', number: '459-12-56' },
   { id: 'id-2', name: 'Hermione Kline', number: '443-89-12' },
@@ -10,21 +11,26 @@ export const defaulContacts = [
   { id: 'id-5', name: 'dima', number: '227-915-26' },
 ];
 
+// создаю слайс для контактов
 export const contactSlice = createSlice({
   name: 'contacts',
   initialState: {
     items: defaulContacts,
   },
   reducers: {
+    // Редюсер для ДОБАВЛЕНИЯ нового контакта с помощю Immer который работает под капотом
     addContact(state, action) {
       state.items.push(action.payload);
     },
+
+    // Редюсер для УДАЛЕНИЯ контакта с помощю Immer который работает под капотом
     remove(state, action) {
       state.items = state.items.filter(el => el.id !== action.payload);
     },
   },
 });
 
+// Слайс для фильтрации контактов
 export const filterSlice = createSlice({
   name: 'contacts',
   initialState: '',
@@ -35,6 +41,8 @@ export const filterSlice = createSlice({
   },
 });
 
+// использую метод combineReducers для создания одного корневого редюсера
+// со всеми значениями из вышенаписаных слайсов
 export const rootReducer = combineReducers({
   contacts: contactSlice.reducer,
   filter: filterSlice.reducer,
@@ -42,7 +50,7 @@ export const rootReducer = combineReducers({
   [testGetContacts.reducerPath]: testGetContacts.reducer,
 });
 
+// Експорт всех редюсеров
 export const { addContact, remove, getContactsFulfilled } =
   contactSlice.actions;
-// export const { getContactsFulfilled } = getContactsSlice.actions;
 export const { filter } = filterSlice.actions;
